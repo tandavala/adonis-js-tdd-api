@@ -1,5 +1,6 @@
 "use strict";
 
+const Factory = use("Factory");
 const Thread = use("App/Models/Thread");
 const { test, trait, afterEach } = use("Test/Suite")("Thread");
 
@@ -25,10 +26,7 @@ test("can create threands", async ({ client }) => {
 });
 
 test("can delete threads", async ({ assert, client }) => {
-  const thread = await Thread.create({
-    title: "test title",
-    body: "test body",
-  });
+  const thread = await Factory.model("App/Models/Thread").create();
 
   const response = await client.delete(`threads/${thread.id}`).send().end();
   console.log(response.error);
