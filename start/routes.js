@@ -20,4 +20,6 @@ Route.get("/", () => {
   return { greeting: "Hello world in JSON" };
 });
 
-Route.resource("threads", "ThreadController").only(["store", "destroy"]);
+Route.resource("threads", "ThreadController")
+  .only(["store", "destroy"])
+  .middleware("auth");
