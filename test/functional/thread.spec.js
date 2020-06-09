@@ -2,7 +2,7 @@
 
 const Factory = use("Factory");
 const Thread = use("App/Models/Thread");
-const { test, trait, afterEach } = use("Test/Suite")("Thread");
+const { test, trait, afterEach } = use("Test/Suite")("Thread Functional test");
 
 trait("Test/ApiClient");
 trait("Auth/Client");
@@ -106,4 +106,27 @@ test("authorized user can update title and body of threads", async ({
   response.assertStatus(200);
   response.assertJSON({ thread: thread.toJSON() });
   assert.deepEqual(thread.toJSON(), updatedThreadAttributes);
+});
+
+test("unauthenticated user cannot update threads", async ({
+  assert,
+  client,
+}) => {
+  const thread = await Factory.model("App/Models/Thread").create();
+  const response = await client.put(thread.url()).send().end();
+  response.assertStatus(401);
+});
+
+test("thread can not be updated by a user who did not create it", async ({
+  assert,
+  client,
+}) => {
+  const thread = await Factory.model("App/Models/Thread").create();
+  const notOwner = await Factory.model("App/Models/User").create();
+  const response = await client
+    .put(thread.url())
+    .send()
+    .loginVia(notOwner)
+    .end();
+  response.assertStatus(403);
 });

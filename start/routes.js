@@ -22,4 +22,9 @@ Route.get("/", () => {
 
 Route.resource("threads", "ThreadController")
   .only(["store", "destroy", "update"])
-  .middleware("auth");
+  .middleware(
+    new Map([
+      [["store", "destroy", "update"], ["auth"]],
+      [["destroy", "update"], ["modifyThreadPolicy"]],
+    ])
+  );

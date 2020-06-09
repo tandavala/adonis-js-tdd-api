@@ -1,7 +1,7 @@
 "use strict";
 
 const Factory = use("Factory");
-const { test, trait, afterEach } = use("Test/Suite")("Thread");
+const { test, trait, afterEach } = use("Test/Suite")("Thread Unit Test");
 const Thread = use("App/Models/Thread");
 
 afterEach(async () => {

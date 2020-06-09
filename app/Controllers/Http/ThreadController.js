@@ -12,6 +12,7 @@ class ThreadController {
 
   async update({ request, params, response }) {
     const thread = await Thread.findOrFail(params.id);
+
     thread.merge(request.only(["title", "body"]));
     await thread.save();
 
@@ -19,11 +20,7 @@ class ThreadController {
   }
 
   async destroy({ params, response, auth }) {
-    const thread = await Thread.findOrFail(params.id);
-    if (thread.user_id !== auth.user.id) {
-      return response.forbidden();
-    }
-    await thread.delete();
+    await Thread.query().where("id", params.id).delete();
   }
 }
 
