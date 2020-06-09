@@ -1,11 +1,12 @@
-'use strict'
+"use strict";
 
 class StoreThread {
-  get rules () {
+  get rules() {
     return {
-      // validation rules
-    }
+      title: "required",
+      body: "required",
+    };
   }
 }
 
-module.exports = StoreThread
+module.exports = StoreThread;

@@ -4,13 +4,17 @@ const { validate } = use("Validator");
 const Thread = use("App/Models/Thread");
 
 class ThreadController {
-  async store({ request, response, auth }) {
-    const rules = { title: "required", body: "required" };
-    const validation = await validate(request.all(), rules);
+  async index({ response }) {
+    const threads = await Thread.all();
+    return response.json({ threads });
+  }
 
-    if (validation.fails()) {
-      return response.badRequest();
-    }
+  async show({ params, response }) {
+    const thread = await Thread.findOrFail(params.id);
+    return response.json({ thread });
+  }
+
+  async store({ request, response, auth }) {
     /*
     if (!request.input("body") || !request.input("title")) {
       return response.badRequest();
