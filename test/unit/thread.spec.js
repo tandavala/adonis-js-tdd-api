@@ -1,12 +1,7 @@
 "use strict";
 
+const { test, trait } = use("Test/Suite")("Thread");
 const Factory = use("Factory");
-const { test, trait, afterEach } = use("Test/Suite")("Thread Unit Test");
-const Thread = use("App/Models/Thread");
-
-afterEach(async () => {
-  await Thread.query().delete();
-});
 
 trait("DatabaseTransactions");
 

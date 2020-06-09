@@ -17,13 +17,7 @@ before(() => {
   ]);
 });
 
-test("non creator of a thread cannot modify it", async ({ assert, client }) => {
-  const action = ({ response }) => response.json({ ok: true });
-  Route.post("test/modify-thread-policy/:id", action).middleware([
-    "auth",
-    "modifyThreadPolicy",
-  ]);
-
+test("non creator of a thread cannot modify it", async ({ client }) => {
   const thread = await Factory.model("App/Models/Thread").create();
   const notOwner = await Factory.model("App/Models/User").create();
   let response = await client
@@ -31,24 +25,26 @@ test("non creator of a thread cannot modify it", async ({ assert, client }) => {
     .loginVia(notOwner)
     .send()
     .end();
-  // console.log(response.error);
   response.assertStatus(403);
 });
 
-test("creator of a thread can modify it", async ({ assert, client }) => {
-  const action = ({ response }) => response.json({ ok: true });
-  Route.post("test/modify-thread-policy/:id", action).middleware([
-    "auth",
-    "modifyThreadPolicy",
-  ]);
-
+test("creator of a thread can modify it", async ({ client }) => {
   const thread = await Factory.model("App/Models/Thread").create();
-  const owner = await thread.user().first();
   let response = await client
     .post(`test/modify-thread-policy/${thread.id}`)
-    .loginVia(owner)
+    .loginVia(await thread.user().first())
     .send()
     .end();
+  response.assertStatus(200);
+});
 
+test("moderator can modify threads", async ({ client }) => {
+  const moderator = await Factory.model("App/Models/User").create({ type: 1 });
+  const thread = await Factory.model("App/Models/Thread").create();
+  let response = await client
+    .post(`test/modify-thread-policy/${thread.id}`)
+    .loginVia(moderator)
+    .send()
+    .end();
   response.assertStatus(200);
 });

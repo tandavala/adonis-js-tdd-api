@@ -6,18 +6,17 @@
 const Thread = use("App/Models/Thread");
 
 class ModifyThreadPolicy {
-  /**
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Function} next
-   */
   async handle({ params, auth, response }, next) {
     const thread = await Thread.findOrFail(params.id);
-    if (thread.user_id !== auth.user.id) {
-      return response.forbidden();
+    if (auth.user.isModerator()) {
+      return next();
     }
 
-    await next();
+    if (thread.user_id === auth.user.id) {
+      return next();
+    }
+
+    return response.forbidden();
   }
 }
 
