@@ -130,3 +130,22 @@ test("thread can not be updated by a user who did not create it", async ({
     .end();
   response.assertStatus(403);
 });
+
+test("can not create thread with no body or title", async ({ client }) => {
+  const user = await Factory.model("App/Models/User").create();
+  let response = await client
+    .post("/threads")
+    .loginVia(user)
+    .send({ title: "test title" })
+    .end();
+
+  response.assertStatus(400);
+
+  response = await client
+    .post("/threads")
+    .loginVia(user)
+    .send({ body: "test bodyy" })
+    .end();
+
+  response.assertStatus(400);
+});
